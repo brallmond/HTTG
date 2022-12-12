@@ -63,16 +63,16 @@ if __name__ == "__main__":
     parser.add_argument('--in_file_one', '-i1', required=True, action='store', help='input file one')
     parser.add_argument('--in_file_two', '-i2', required=True, action='store', help='input file two')
     parser.add_argument('--in_file_three', '-i3', required=True, action='store', help='input file three')
+    parser.add_argument('--label_one', '-l1', required=True, action='store', help='label one')
+    parser.add_argument('--label_two', '-l2', required=True, action='store', help='label two')
+    parser.add_argument('--label_three', '-l3', required=True, action='store', help='label three')
 
     args = parser.parse_args()
 
-    label_one = "GC_15_100x"
-    label_two = "GC_15_10x"
-    label_three = "GC_15_1x"
 
     variables = ["h_t1pt", "h_t2pt", "h_phpt"]
 
     for var in variables:
       make_comparison_plot(args.in_file_one, args.in_file_two, args.in_file_three, var, \
-                           label_one, label_two, label_three)
+                           args.label_one, args.label_two, args.label_three)
 

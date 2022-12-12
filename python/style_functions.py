@@ -21,3 +21,10 @@ def set_labels(hist: ROOT.TH1F, hist_title: str, hist_yaxis: str, hist_xaxis: st
     hist.GetYaxis().SetTitle(hist_yaxis)
     hist.GetXaxis().SetTitle(hist_xaxis)
 
+# name : [xaxis_max, ylog_boolean]
+HTTG_AXIS_SETTINGS = {
+    "h_t1pt" : [65, False],
+    "h_t2pt" : [65, False],
+    "h_phpt" : [70, True],
+    }
+
