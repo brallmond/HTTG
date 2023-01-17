@@ -123,9 +123,9 @@ test::test(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("../inputfiles/fixed_local_0p5x_1000events.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("../inputfiles/GC_15_1x_byproduct_of_gridpack_generation_1000events.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("../inputfiles/fixed_local_0p5x_1000events.root");
+         f = new TFile("../inputfiles/GC_15_1x_byproduct_of_gridpack_generation_1000events.root");
       }
       f->GetObject("LHEF",tree);
 
