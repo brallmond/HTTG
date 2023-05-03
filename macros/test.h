@@ -123,9 +123,10 @@ test::test(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("../inputfiles/fixed_local_0p5x_1000events.root");
+      //TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("../inputfiles/VBF_run3_cmsgrid_final.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("../inputfiles/VBF_run3_cmsgrid_final.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("../inputfiles/fixed_local_0p5x_1000events.root");
+         f = new TFile("../inputfiles/VBF_run3_cmsgrid_final.root");
       }
       f->GetObject("LHEF",tree);
 

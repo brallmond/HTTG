@@ -33,10 +33,11 @@ void test::Loop()
 
    Long64_t nentries = fChain->GetEntriesFast();
 
-   TFile* f = TFile::Open("../outputfiles/output_fixed_local_0p5x_1000events.root", "recreate");
-   TH1F* h_t1pt = new TH1F("h_t1pt", "", 100, 0, 200);
-   TH1F* h_t2pt = new TH1F("h_t2pt", "", 100, 0, 200);
-   TH1F* h_phpt = new TH1F("h_phpt", "", 100, 0, 200);
+   TFile* f = TFile::Open("../outputfiles/output_VBF_run3_cmsgrid_final.root", "recreate");
+   TH1F* H_pt     = new TH1F("H_pt", "", 50, 0, 500);
+   TH1F* H_eta    = new TH1F("H_eta", "", 50, -5, 5);
+   TH1F* H_phi    = new TH1F("H_phi", "", 50, -6.3, 6.3);
+   TH1F* H_energy = new TH1F("H_energy", "", 50, 0, 500);
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -45,50 +46,24 @@ void test::Loop()
       nb = fChain->GetEntry(jentry);   nbytes += nb;
       // if (Cut(ientry) < 0) continue;
 
-      TLorentzVector tau1;      
-      TLorentzVector tau2;      
-      TLorentzVector photon;      
-      std::cout << "beginning" << std::endl;
-      std::cout << tau1.Pt() << '\t' << tau2.Pt() << '\t' << photon.Pt() << std::endl;
+      TLorentzVector Higgs;      
       for (int i = 0; i < Particle_; ++i) {
-        // save taus
-        if (Particle_PID[i] == 15 || Particle_PID[i] == -15) {
-          // if no leading tau, save any tau as first tau
-          if(tau1.Pt() == 0) {
-            tau1.SetPtEtaPhiE(Particle_PT[i], Particle_Eta[i], \
-                              Particle_Phi[i], Particle_E[i]);
-          }
-          // if no subleading tau, save as leading if new tau
-          // has pT greater than first tau, otherwise
-          // save as subleading tau
-          else if (tau2.Pt() == 0) {
-            if (Particle_PT[i] > tau1.Pt()) {
-              tau2 = tau1;
-              tau1.SetPtEtaPhiE(Particle_PT[i], Particle_Eta[i], \
-                                Particle_Phi[i], Particle_E[i]);
-            }
-            else {
-              tau2.SetPtEtaPhiE(Particle_PT[i], Particle_Eta[i], \
-                                Particle_Phi[i], Particle_E[i]);
-            }
-          }
+        // save Higgs
+        if (Particle_PID[i] == 25) {
+          Higgs.SetPtEtaPhiE(Particle_PT[i], Particle_Eta[i], \
+                             Particle_Phi[i], Particle_E[i]);
         }
-        // save photon
-        else if (Particle_PID[i] == 22) {
-          photon.SetPtEtaPhiE(Particle_PT[i], Particle_Eta[i], \
-                              Particle_Phi[i], Particle_E[i]);
-        }
-
       }
-      std::cout << "end" << std::endl;
-      std::cout << tau1.Pt() << '\t' << tau2.Pt() << '\t' << photon.Pt() << std::endl;
-      h_t1pt->Fill(tau1.Pt());
-      h_t2pt->Fill(tau2.Pt());
-      h_phpt->Fill(photon.Pt());
+      H_pt->Fill(    Higgs.Pt());
+      H_eta->Fill(   Higgs.Eta());
+      H_phi->Fill(   Higgs.Phi());
+      H_energy->Fill(Higgs.E());
+
    } // end event loop
-   h_t1pt->Write();
-   h_t2pt->Write();
-   h_phpt->Write();
+   H_pt->Write();
+   H_eta->Write();
+   H_phi->Write();
+   H_energy->Write();
 
    f->Close();
 
