@@ -1,4 +1,5 @@
 import ROOT
+import shutil
 import os
 import sys
 
@@ -29,13 +30,14 @@ def make_comparison_plot(in_file_one: 'str', in_file_two: 'str',
     root_file_two.Close()
 
     # set xaxis maximum and ylog True/False
-    xaxis_max = HTTG_AXIS_SETTINGS[var][0]
-    ylog_boolean = HTTG_AXIS_SETTINGS[var][1]
+    xaxis_min = HTTG_AXIS_SETTINGS[var][0]
+    xaxis_max = HTTG_AXIS_SETTINGS[var][1]
+    ylog_boolean = HTTG_AXIS_SETTINGS[var][2]
 
     # set styles and labels
     set_style(h_one, 4, 4)
     set_labels(h_one, var, "Events", var)
-    h_one.GetXaxis().SetRangeUser(0.0, xaxis_max)
+    h_one.GetXaxis().SetRangeUser(xaxis_min, xaxis_max)
     if (ylog_boolean):
       ROOT.gPad.SetLogy()
     h_one.Draw("HIST, PE")
@@ -63,9 +65,32 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    variables = ["h_t1pt", "h_t2pt", "h_phpt"]
+    #variables = ["h_t1pt", "h_t2pt", "h_phpt"]
+    #variables = ["H_pt", "H_eta", "H_phi", "H_energy"]
+    variables = [
+                 "H_pt", "H_eta", "H_phi", "H_energy",
+                 "J1_pt", "J1_eta", "J1_phi", "J1_energy",
+                 "J2_pt", "J2_eta", "J2_phi", "J2_energy",
+                 "J3_pt", "J3_eta", "J3_phi", "J3_energy",
+                 "mjj", "pair_deta",
+                ]
 
     for var in variables:
       make_comparison_plot(args.in_file_one, args.in_file_two, var, \
                            args.label_one, args.label_two)
+
+    source_dir = '/Users/ballmond/HTTG/python'
+    target_dir = '/Users/ballmond/HTTG/graphs'
+        
+    file_names = os.listdir(source_dir)
+    file_names = [file_name for file_name in file_names if ".png" in file_name]
+        
+    for file_name in file_names:
+
+      if os.path.isfile(target_dir + '/' + file_name):  
+        os.remove(target_dir + '/' + file_name)
+
+      shutil.move(os.path.join(source_dir, file_name), target_dir)
+
+
 
