@@ -1,0 +1,64 @@
+Generic instructions for starting a simple analysis when you already have a root file of data.
+
+First, read the note "BasicRootFileBrowsing."
+The instructions there are *perfect* for single-file browsing/graph generating.
+
+But if you need to operate with more than one root file, we should introduce some additional flexibility.
+We will assume that your input files have the same trees and branches, but different data 
+(you'd see something like this with MC files for different models, and also multiple NanoAOD files).
+
+In your header file (the one ending with .h), you'll change two lines.
+change
+test(TTree *tree=0); to
+test(TString name);
+and change
+test::test(TTree *tree) : fChain(0) to
+test::test(TString name)
+also add this after the "{" just after the line we just changed
+{ to
+{ TTree* tree = nullptr;
+next, change
+TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("sm_events.root"); to
+TFile *f = (TFile*)gROOR->GetListOfFiles()->FindObject(name);
+finally, change
+f = new TFile("sm_events.root"); to
+f = new TFile(name);
+Great, that should be everything. What we just did now allows us to select an input file instead of being stuck with
+whatever file we used with "MakeClass" in the first place.
+What we just did in cpp terms was modify the input parameter and function of the instantiation of a class object called
+"test". 
+
+In your loop function file (the one ending with .C) you'll change more than two lines.
+change
+void test::Loop() { to
+void test::Loop(TString outname) {
+add the line
+TFile* f = TFile::Open(outname, "recreate")
+just inside the function
+This change is all you need to do to make an output file.
+But an output file isn't worth much unless you put something in it.
+So next, add a histogram just below TFile with this line.
+TH1F* hist = new TH1F("newhist", "", 100, 0, 200);
+The arguments are ("name", "?", bins, lowerbound, upperbound)
+histograms have to be filled, so somewhere inside your loop put some info into the histogram like this
+hist->Fill(Particle_PT[i]);
+Fantastic! Now we just have to tell ROOT we want to save the object we filled. We typically want to save things after
+we've looked at all the data, so, write this line right after the event loop.
+hist->Write();
+You also should close the file we just wrote to.
+f->Close();
+
+Doing this requires us to change how we call our file. You used to call it like this.
+root -l
+.L test.C
+test t
+t.Loop()
+
+Now you'll call it like this.
+root -l
+.L test.C
+test t("input_filename.root")
+t.Loop("output_filename.root")
+
+Instead of plotting directly, now Loop generates output.root files.
+See "PlottingOutputRootFiles" for more info. 

@@ -39,12 +39,17 @@ void test::Loop()
    TH1F* H_phi    = new TH1F("H_phi", "", 50, -6.3, 6.3);
    TH1F* H_energy = new TH1F("H_energy", "", 50, 0, 500);
 
+   int higgs_index = -2;
+   int higgs_decay_count = 0;
+   bool tau1_recorded = false;
+   bool tau2_recorded = false;
+   bool photon_recorded = false;
+
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
-      // if (Cut(ientry) < 0) continue;
 
       TLorentzVector Higgs;      
       for (int i = 0; i < Particle_; ++i) {
@@ -64,7 +69,6 @@ void test::Loop()
    H_eta->Write();
    H_phi->Write();
    H_energy->Write();
-
    f->Close();
 
 }
